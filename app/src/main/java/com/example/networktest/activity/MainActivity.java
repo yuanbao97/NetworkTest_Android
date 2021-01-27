@@ -17,6 +17,9 @@ import java.net.URL;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MainActivity extends BaseActivity {
 
@@ -34,7 +37,8 @@ public class MainActivity extends BaseActivity {
 
     @OnClick(R.id.send_request_button)
     public void onClick() {
-        sendRequestWithHttpURLConnection();
+//        sendRequestWithHttpURLConnection();
+        sendRequestWithOkHttp();
     }
 
     private void sendRequestWithHttpURLConnection() {
@@ -71,6 +75,25 @@ public class MainActivity extends BaseActivity {
                     if(connection != null) {
                         connection.disconnect();
                     }
+                }
+            }
+        }).start();
+    }
+
+    private void sendRequestWithOkHttp() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    OkHttpClient client = new OkHttpClient();
+                    Request request = new Request.Builder()
+                            .url("https://www.baidu.com")
+                            .build();
+                    Response response = client.newCall(request).execute();
+                    String responseData = response.body().string();
+                    showResponse(responseData);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }).start();
